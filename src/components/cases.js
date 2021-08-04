@@ -36,7 +36,6 @@ const Cases = () => {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="case">
                         {caseStudies.map(e => (
                             <div className="case" key={e.id}>
                                 <div className="case-details">
@@ -44,11 +43,10 @@ const Cases = () => {
                                     <h2>{e.title}</h2>
                                 </div>
                                 <div className="case-image">
-                                    <img src={require(`../assets/${caseItem.img}.png`)} alt={e.title} />
+                                    <img src={require(`../assets/${e.img}.png`)} alt={e.title} />
                                 </div>
                             </div>
                         ))}
-                    </div>
                 </div>
             </div>
         </section>
