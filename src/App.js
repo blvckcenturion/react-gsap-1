@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "./components/header";
 import "./styles/App.scss";
 import gsap from "gsap";
@@ -21,24 +21,49 @@ const routes = [
   {path: '/services', name: 'Services', component: Services},
   {path: '/about', name: 'About Us', component: About},
 ]
+//Dynamic resizing -> debouncer function 
+function debounce(fn, ms) {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      timeout = null;
+      fn.apply(this, arguments);
+    }, ms);
+  };
+}
 
 function App() {
+  const [dimensions, setDimensions] = useState({
+    height: window.innerHeight,
+    width: window.innerWidth,
+  })
+  const tl = gsap.timeline();
+  tl.to("body", 0, {css: {visibility: "visible"}})
 
   useEffect(() => {
-    const tl = gsap.timeline();
+    
     //making the body visible
 
-    let vh = window.innerHeight * .01;
+    let vh = dimensions.height * .01;
     document.documentElement.style.setProperty('--vh', `${vh}px`)
-
-    tl.to("body", 0, {css: {visibility: "visible"}})
+    //Dynamic resizing
+    const debouncedHandleResize = debounce(function handleResize(){
+      setDimensions({
+        height: window.innerHeight,
+        width: window.innerWidth
+      })
+    }, 100)
+    //Dynamic resizing
+    window.addEventListener('resize', debouncedHandleResize);
+    return () => {
+      window.removeEventListener('resize', debouncedHandleResize);
+    }
+    
   })
-
-
-  
   return (
     <>
-      <Header/>
+      <Header dimensions={dimensions}/>
       <div className='App'>
         {routes.map(({path, component}) => (<Route key={path} exact path={path} component={component}/>))}
       </div>
